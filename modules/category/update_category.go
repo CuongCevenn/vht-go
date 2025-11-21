@@ -2,44 +2,34 @@ package categorymodule
 
 import (
 	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
-func UpdateCategory(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+func UpdateCategory(db *gorm.DB) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		id, err := uuid.Parse(c.Param("id"))
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
-
-	var catBody UpdateCategoryDTO
-
-	if err := c.ShouldBindJSON(&catBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
-
-	for i, category := range categories {
-		if category.ID == id {
-			if catBody.Name != nil {
-				category.Name = *catBody.Name
-			}
-			if catBody.Description != nil {
-				category.Description = *catBody.Description
-			}
-			if catBody.Status != nil {
-				category.Status = *catBody.Status
-			}
-			category.UpdatedAt = time.Now()
-			categories[i] = category
-			c.JSON(http.StatusOK, category)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
-	}
-	c.JSON(http.StatusNotFound, gin.H{"message": "category not found"})
 
+		var catBody UpdateCategoryDTO
+
+		if err := c.ShouldBindJSON(&catBody); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			return
+		}
+	
+
+		if err := db.Where("id = ?", id).Updates(&catBody).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			return
+		}	
+		
+		c.JSON(http.StatusOK, gin.H{"data": true})
+	}
 }

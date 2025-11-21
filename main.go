@@ -18,8 +18,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("failed to connect database")
 	}
-	
-	fmt.Println(db)
+	fmt.Println("Database connected")
 
 	r := gin.Default()
 
@@ -27,11 +26,11 @@ func main() {
 
 	catGroup := v1.Group("/categories")
 	{
-		catGroup.POST("", categorymodule.CreateCategory)
-		catGroup.GET("/:id", categorymodule.GetCategoryById)
-		catGroup.GET("", categorymodule.ListCategories)
-		catGroup.PUT("/:id", categorymodule.UpdateCategory)
-		catGroup.DELETE("/:id", categorymodule.DeleteCategory)
+		catGroup.POST("", categorymodule.CreateCategory(db))
+		catGroup.GET("/:id", categorymodule.GetCategoryById(db))
+		catGroup.GET("", categorymodule.ListCategories(db))
+		catGroup.PATCH("/:id", categorymodule.UpdateCategory(db))
+		catGroup.DELETE("/:id", categorymodule.DeleteCategory(db))
 	}
 
 	r.GET("/ping", func(c *gin.Context) {
