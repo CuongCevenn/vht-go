@@ -24,14 +24,7 @@ func main() {
 
 	v1 := r.Group("/v1")
 
-	catGroup := v1.Group("/categories")
-	{
-		catGroup.POST("", categorymodule.CreateCategory(db))
-		catGroup.GET("/:id", categorymodule.GetCategoryById(db))
-		catGroup.GET("", categorymodule.ListCategories(db))
-		catGroup.PATCH("/:id", categorymodule.UpdateCategory(db))
-		catGroup.DELETE("/:id", categorymodule.DeleteCategory(db))
-	}
+	categorymodule.SetupCategoryModule(v1, db)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{

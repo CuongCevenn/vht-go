@@ -1,35 +1,32 @@
-package categorymodule
+package categorycontroller
 
 import (
 	"net/http"
+	categoryservice "vht-go/modules/category/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
-func UpdateCategory(db *gorm.DB) func(c *gin.Context) {
+func (ctrl *HTTPCategoryController) UpdateCategoryAPI() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := uuid.Parse(c.Param("id"))
-
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
 
-		var catBody UpdateCategoryDTO
+		var dto categoryservice.UpdateCategoryDTO
 
-		if err := c.ShouldBindJSON(&catBody); err != nil {
+		if err := c.ShouldBindJSON(&dto); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
-	
 
-		if err := db.Where("id = ?", id).Updates(&catBody).Error; err != nil {
+		if err := ctrl.svc.UpdateCategory(c.Request.Context(), &dto, &id); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
-		}	
-		
+		}
 		c.JSON(http.StatusOK, gin.H{"data": true})
 	}
 }
