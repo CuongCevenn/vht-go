@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	categorymodule "vht-go/modules/category"
+	restaurantmodule "vht-go/modules/restaurant"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -25,6 +26,7 @@ func main() {
 	v1 := r.Group("/v1")
 
 	categorymodule.SetupCategoryModule(v1, db)
+	restaurantmodule.SetupRestaurantModule(v1, db)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
