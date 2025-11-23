@@ -7,10 +7,10 @@ import (
 )
 
 type HTTPCategoryController struct {
-	svc *categoryservice.CategoryService
+	svc categoryservice.ICategoryService
 }
 
-func NewHTTPCategoryController(svc *categoryservice.CategoryService) *HTTPCategoryController {
+func NewHTTPCategoryController(svc categoryservice.ICategoryService) *HTTPCategoryController {
 	return &HTTPCategoryController{svc: svc}
 }
 

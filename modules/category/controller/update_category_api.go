@@ -23,7 +23,12 @@ func (ctrl *HTTPCategoryController) UpdateCategoryAPI() gin.HandlerFunc {
 			return
 		}
 
-		if err := ctrl.svc.UpdateCategory(c.Request.Context(), &dto, &id); err != nil {
+		cmd := categoryservice.UpdateCategoryCommand{
+			Data: dto,
+			Id:   id,
+		}
+
+		if err := ctrl.svc.UpdateCategory(c.Request.Context(), &cmd); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
 		}

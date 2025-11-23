@@ -8,7 +8,7 @@ import (
 )
 
 func (repo *GORMCategoryRepository) Update(ctx context.Context, category *categorydomain.Category, id *uuid.UUID) error {
-	if err := repo.db.Where("id = ?", *id).Updates(category).Error; err != nil {
+	if err := repo.db.Where("id = ?", *id).Save(category).Error; err != nil {
 		return err
 	}
 	return nil

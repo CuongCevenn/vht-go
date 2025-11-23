@@ -2,6 +2,8 @@ package categoryservice
 
 import (
 	"context"
+	"errors"
+	"strings"
 	"time"
 	categorydomain "vht-go/modules/category/domain"
 
@@ -14,15 +16,25 @@ type UpdateCategoryDTO struct {
 	Status      *int    `json:"status,omitempty"`
 }
 
-func (s *CategoryService) UpdateCategory(ctx context.Context, dto *UpdateCategoryDTO, id *uuid.UUID) error {
+func (UpdateCategoryDTO) TableName() string {
+	return categorydomain.Category{}.TableName()
+}
 
-	oldCategory, err := s.repo.FindById(ctx, id)
+type UpdateCategoryCommand struct {
+	Id uuid.UUID `json:"id"`
+	Data UpdateCategoryDTO `json:"data"`
+}
+
+
+func (s *CategoryService) UpdateCategory(ctx context.Context, cmd *UpdateCategoryCommand) error {
+
+	oldCategory, err := s.repo.FindById(ctx, &cmd.Id)
 	if err != nil {
 		return err
 	}
 
 	category := &categorydomain.Category{
-		Id: *id,
+		Id: cmd.Id,
 		Name: oldCategory.Name,
 		Description: oldCategory.Description,
 		Status: oldCategory.Status,
@@ -30,15 +42,21 @@ func (s *CategoryService) UpdateCategory(ctx context.Context, dto *UpdateCategor
 		UpdatedAt: time.Now(),
 	}
 	
-	if dto.Name != nil {
-		category.Name = *dto.Name
+	if cmd.Data.Name != nil {
+		category.Name = strings.TrimSpace(*cmd.Data.Name)
 	}
-	if dto.Description != nil {
-		category.Description = *dto.Description
+	if cmd.Data.Description != nil {
+		category.Description = strings.TrimSpace(*cmd.Data.Description)
 	}
-	if dto.Status != nil {
-		category.Status = *dto.Status
+	if cmd.Data.Status != nil {
+		if *cmd.Data.Status < 0 || *cmd.Data.Status > 1 {
+			return  errors.New(categorydomain.ErrInvalidStatusFilter)
+		}
+		if category.Status == 0 {
+			return errors.New(categorydomain.ErrCategoryInactive)
+		}
+		category.Status = *cmd.Data.Status
 	}
 
-	return s.repo.Update(ctx, category, id)
+	return s.repo.Update(ctx, category, &cmd.Id)
 }

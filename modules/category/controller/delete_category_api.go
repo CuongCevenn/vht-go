@@ -14,7 +14,7 @@ func (ctrl *HTTPCategoryController) DeleteCategory() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
-		err = ctrl.svc.DeleteCategory(c.Request.Context(), id)
+		err = ctrl.svc.DeleteCategory(c.Request.Context(), &id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
