@@ -3,6 +3,7 @@ package restaurantcontroller
 import (
 	"net/http"
 	"strconv"
+	restaurantservice "vht-go/modules/restaurant/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,7 @@ func (ctrl *HTTPRestaurantController) DeleteRestaurantAPI() gin.HandlerFunc {
 			return
 		}
 
-		if err := ctrl.svc.DeleteRestaurant(c.Request.Context(), id); err != nil {
+		if err := ctrl.deleteHandler.Handle(c.Request.Context(), &restaurantservice.DeleteRestaurantCommand{Id: id}); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
 		}

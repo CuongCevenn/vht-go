@@ -3,6 +3,7 @@ package restaurantcontroller
 import (
 	"net/http"
 	"strconv"
+	restaurantservice "vht-go/modules/restaurant/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,7 @@ func (ctrl *HTTPRestaurantController) GetRestaurantByIdAPI() gin.HandlerFunc {
 			return
 		}
 
-		restaurant, err := ctrl.svc.GetRestaurantById(c.Request.Context(), id)
+		restaurant, err := ctrl.getHandler.Handle(c.Request.Context(), &restaurantservice.GetRestaurantQuery{Id: id})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return

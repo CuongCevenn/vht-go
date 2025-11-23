@@ -5,26 +5,30 @@ import (
 	"strings"
 	"time"
 	restaurantdomain "vht-go/modules/restaurant/domain"
+	restaurantdtos "vht-go/modules/restaurant/dtos"
 )
-
-type UpdateRestaurantDTO struct {
-	Name             *string         `json:"name,omitempty"`
-	Addr             *string         `json:"addr,omitempty"`
-	CityId           *int            `json:"city_id,omitempty"`
-	Lat              *float64        `json:"lat,omitempty"`
-	Lng              *float64        `json:"lng,omitempty"`
-	ShippingFeePerKm *float64        `json:"shipping_fee_per_km,omitempty"`
-	Status           *int            `json:"status,omitempty"`
-}
 
 type UpdateRestaurantCommand struct {
 	Id   int
-	Data UpdateRestaurantDTO
+	Data restaurantdtos.UpdateRestaurantDTO
 }
 
-func (s *RestaurantService) UpdateRestaurant(ctx context.Context, cmd *UpdateRestaurantCommand) error {
+type IUpdateRestaurantRepository interface {
+	FindById(ctx context.Context, id int) (*restaurantdomain.Restaurant, error)
+	Update(ctx context.Context, restaurant *restaurantdomain.Restaurant, id int) error
+}
+
+type UpdateRestaurantCommandHandler struct {
+	repo IUpdateRestaurantRepository
+}
+
+func NewUpdateRestaurantCommandHandler(repo IUpdateRestaurantRepository) *UpdateRestaurantCommandHandler {
+	return &UpdateRestaurantCommandHandler{repo: repo}
+}
+
+func (h *UpdateRestaurantCommandHandler) Handle(ctx context.Context, cmd *UpdateRestaurantCommand) error {
 	// Fetch existing restaurant
-	oldRestaurant, err := s.repo.FindById(ctx, cmd.Id)
+	oldRestaurant, err := h.repo.FindById(ctx, cmd.Id)
 	if err != nil {
 		return err
 	}
@@ -70,7 +74,7 @@ func (s *RestaurantService) UpdateRestaurant(ctx context.Context, cmd *UpdateRes
 	if cmd.Data.Lng != nil {
 		restaurant.Lng = cmd.Data.Lng
 	}
-	
+
 	if cmd.Data.ShippingFeePerKm != nil {
 		if *cmd.Data.ShippingFeePerKm >= 0 {
 			restaurant.ShippingFeePerKm = *cmd.Data.ShippingFeePerKm
@@ -82,6 +86,6 @@ func (s *RestaurantService) UpdateRestaurant(ctx context.Context, cmd *UpdateRes
 	}
 
 	// Persist changes
-	return s.repo.Update(ctx, restaurant, cmd.Id)
+	return h.repo.Update(ctx, restaurant, cmd.Id)
 }
 

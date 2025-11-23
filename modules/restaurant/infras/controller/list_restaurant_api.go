@@ -2,6 +2,7 @@ package restaurantcontroller
 
 import (
 	"net/http"
+	restaurantdtos "vht-go/modules/restaurant/dtos"
 	restaurantservice "vht-go/modules/restaurant/service"
 
 	"github.com/gin-gonic/gin"
@@ -9,14 +10,14 @@ import (
 
 func (ctrl *HTTPRestaurantController) ListRestaurantsAPI() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var query restaurantservice.ListRestaurantQuery
+		var dto restaurantdtos.ListRestaurantDTO
 
-		if err := c.ShouldBindQuery(&query); err != nil {
+		if err := c.ShouldBindQuery(&dto); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
 
-		result, err := ctrl.svc.ListRestaurants(c.Request.Context(), &query)
+		result, err := ctrl.listHandler.Handle(c.Request.Context(), &restaurantservice.ListRestaurantQuery{DTO: dto})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return

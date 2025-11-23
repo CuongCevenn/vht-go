@@ -3,6 +3,7 @@ package restaurantcontroller
 import (
 	"net/http"
 	"strconv"
+	restaurantdtos "vht-go/modules/restaurant/dtos"
 	restaurantservice "vht-go/modules/restaurant/service"
 
 	"github.com/gin-gonic/gin"
@@ -17,14 +18,14 @@ func (ctrl *HTTPRestaurantController) UpdateRestaurantAPI() gin.HandlerFunc {
 			return
 		}
 
-		var dto restaurantservice.UpdateRestaurantDTO
+		var dto restaurantdtos.UpdateRestaurantDTO
 		if err := c.ShouldBindJSON(&dto); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
 
 		cmd := restaurantservice.UpdateRestaurantCommand{Id: id, Data: dto}
-		if err := ctrl.svc.UpdateRestaurant(c.Request.Context(), &cmd); err != nil {
+		if err := ctrl.updateHandler.Handle(c.Request.Context(), &cmd); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
 		}

@@ -3,15 +3,8 @@ package restaurantservice
 import (
 	"context"
 	restaurantdomain "vht-go/modules/restaurant/domain"
+	restaurantdtos "vht-go/modules/restaurant/dtos"
 )
-
-type IRestaurantService interface {
-	CreateNewRestaurant(ctx context.Context, dto *CreateRestaurantDTO) (newId int, err error)
-	GetRestaurantById(ctx context.Context, id int) (*restaurantdomain.Restaurant, error)
-	UpdateRestaurant(ctx context.Context, cmd *UpdateRestaurantCommand) error
-	ListRestaurants(ctx context.Context, query *ListRestaurantQuery) (*ListRestaurantResult, error)
-	DeleteRestaurant(ctx context.Context, id int) error
-}
 
 type IRestaurantRepository interface {
 	Insert(ctx context.Context, restaurant *restaurantdomain.Restaurant) error
@@ -24,11 +17,11 @@ type IRestaurantRepository interface {
 	Delete(ctx context.Context, id int) error
 }
 
-type RestaurantService struct {
-	repo IRestaurantRepository
+// Deprecated: Use CQRS handlers instead
+type IRestaurantService interface {
+	CreateNewRestaurant(ctx context.Context, dto *restaurantdtos.CreateRestaurantDTO) (newId int, err error)
+	GetRestaurantById(ctx context.Context, id int) (*restaurantdomain.Restaurant, error)
+	UpdateRestaurant(ctx context.Context, cmd *UpdateRestaurantCommand) error
+	ListRestaurants(ctx context.Context, query *ListRestaurantQuery) (*ListRestaurantResult, error)
+	DeleteRestaurant(ctx context.Context, id int) error
 }
-
-func NewRestaurantService(repo IRestaurantRepository) *RestaurantService {
-	return &RestaurantService{repo: repo}
-}
-
