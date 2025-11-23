@@ -4,13 +4,12 @@ import (
 	"context"
 	"errors"
 	categorydomain "vht-go/modules/category/domain"
-	categoryservice "vht-go/modules/category/service"
+	categorydtos "vht-go/modules/category/dtos"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func (repo *GORMCategoryRepository) FindAll(ctx context.Context, dto *categoryservice.ListCategoryDTO) (categories []categorydomain.Category, err error) {
+func (repo *GORMCategoryRepository) FindAll(ctx context.Context, dto *categorydtos.ListCategoryDTO) (categories []categorydomain.Category, err error) {
 	paging := dto.Paging
 
 	db := repo.db.Table(categorydomain.Category{}.TableName())
@@ -26,8 +25,8 @@ func (repo *GORMCategoryRepository) FindAll(ctx context.Context, dto *categoryse
 	return categories, nil
 }	
 
-func (repo *GORMCategoryRepository) FindById(ctx context.Context, id *uuid.UUID) (category *categorydomain.Category, err error) {
-	if err = repo.db.First(&category, "id = ?", *id).Error; err != nil {
+func (repo *GORMCategoryRepository) FindById(ctx context.Context, dto *categorydtos.GetCategoryDTO) (category *categorydomain.Category, err error) {
+	if err = repo.db.First(&category, "id = ?", *dto.Id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, errors.New(categorydomain.ErrCategoryNotFound)
 		}

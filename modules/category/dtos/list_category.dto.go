@@ -1,7 +1,6 @@
-package categoryservice
+package categorydtos
 
 import (
-	"context"
 	"errors"
 	categorydomain "vht-go/modules/category/domain"
 	"vht-go/shared"
@@ -23,8 +22,4 @@ func (dto *FilterStatusDTO) Validate() error {
 type ListCategoryDTO struct {
 	Paging *shared.Paging
 	Filter *FilterStatusDTO
-}
-
-func (s *CategoryService) GetAllCategories(ctx context.Context, dto *ListCategoryDTO) (categories []categorydomain.Category, err error) {
-	return s.repo.FindAll(ctx, dto)
 }

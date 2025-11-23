@@ -3,6 +3,8 @@ package categorycontroller
 import (
 	"net/http"
 	categorydomain "vht-go/modules/category/domain"
+	categorydtos "vht-go/modules/category/dtos"
+	categoryservice "vht-go/modules/category/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -18,7 +20,12 @@ func (ctrl *HTTPCategoryController) GetCategoryByIdAPI() gin.HandlerFunc {
 		}
 
 		var category *categorydomain.Category
-		category, err = ctrl.svc.GetCategoryById(c.Request.Context(), &id)
+		dtos := &categorydtos.GetCategoryDTO{Id: &id}
+		cmd := &categoryservice.GetCategoryQuery{DTO: dtos}
+
+		category, err = ctrl.getHandler.Handle(c.Request.Context(), cmd)
+
+
 
 		if err != nil {
 			if err.Error() == categorydomain.ErrCategoryNotFound {

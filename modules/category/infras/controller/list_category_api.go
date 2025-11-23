@@ -3,6 +3,7 @@ package categorycontroller
 import (
 	"net/http"
 	categorydomain "vht-go/modules/category/domain"
+	categorydtos "vht-go/modules/category/dtos"
 	categoryservice "vht-go/modules/category/service"
 	"vht-go/shared"
 
@@ -11,7 +12,7 @@ import (
 
 type ListCategoriesRequest struct {
 	shared.Paging `form:"paging"`
-	categoryservice.FilterStatusDTO `form:"filter"`
+	categorydtos.FilterStatusDTO `form:"filter"`
 }
 
 func (ctrl *HTTPCategoryController) GetListCategoriesAPI() gin.HandlerFunc {
@@ -24,13 +25,13 @@ func (ctrl *HTTPCategoryController) GetListCategoriesAPI() gin.HandlerFunc {
 
 		reqData.Paging.Process()
 
-		dto := categoryservice.ListCategoryDTO{
+		dto := categorydtos.ListCategoryDTO{
 			Paging: &reqData.Paging,
 			Filter: &reqData.FilterStatusDTO,
 		}
 
 		var categories []categorydomain.Category
-		categories, err := ctrl.svc.GetAllCategories(c.Request.Context(), &dto)
+		categories, err := ctrl.listHandler.Handle(c.Request.Context(), &categoryservice.ListCategoryQuery{DTO: &dto})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
