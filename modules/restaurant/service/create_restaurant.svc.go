@@ -2,9 +2,12 @@ package restaurantservice
 
 import (
 	"context"
+	"log"
 	"time"
 	restaurantdomain "vht-go/modules/restaurant/domain"
 	restaurantdtos "vht-go/modules/restaurant/dtos"
+
+	"github.com/google/uuid"
 )
 
 type CreateRestaurantResultCommand struct {
@@ -28,8 +31,19 @@ func (h *CreateRestaurantResultCommandHandler) Handle(ctx context.Context, cmd *
 		return 0, err
 	}
 
+    var catId uuid.UUID
+
+	if cmd.DTO.CategoryId != nil {
+		var err error
+		catId, err = uuid.Parse(*cmd.DTO.CategoryId)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
 	restaurant := &restaurantdomain.Restaurant{
 		OwnerId:          cmd.DTO.OwnerId,
+		CategoryId:       &catId,
 		Name:             cmd.DTO.Name,
 		Addr:             cmd.DTO.Addr,
 		CityId:           cmd.DTO.CityId,

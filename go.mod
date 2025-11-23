@@ -8,6 +8,8 @@ require (
 	gorm.io/gorm v1.31.1
 )
 
+require resty.dev/v3 v3.0.0-beta.3
+
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/bytedance/sonic v1.14.0 // indirect

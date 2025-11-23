@@ -8,6 +8,7 @@ import (
 
 type CreateRestaurantDTO struct {
 	OwnerId          int      `json:"owner_id" binding:"required"`
+	CategoryId       *string  `json:"category_id,omitempty"`
 	Name             string   `json:"name" binding:"required"`
 	Addr             string   `json:"addr" binding:"required"`
 	CityId           *int     `json:"city_id,omitempty"`

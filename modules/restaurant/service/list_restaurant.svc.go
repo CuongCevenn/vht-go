@@ -4,6 +4,8 @@ import (
 	"context"
 	restaurantdomain "vht-go/modules/restaurant/domain"
 	restaurantdtos "vht-go/modules/restaurant/dtos"
+
+	"github.com/google/uuid"
 )
 
 type ListRestaurantQuery struct {
@@ -26,12 +28,17 @@ type IListRestaurantRepository interface {
 	CountWithFilters(ctx context.Context, ownerId *int, cityId *int, status *int) (int64, error)
 }
 
-type ListRestaurantQueryHandler struct {
-	repo IListRestaurantRepository
+type IGetRestaurantsCategories interface {
+	FindCategoriesByIds(ctx context.Context, ids []uuid.UUID) ([]restaurantdomain.RestaurantCategory, error)
 }
 
-func NewListRestaurantQueryHandler(repo IListRestaurantRepository) *ListRestaurantQueryHandler {
-	return &ListRestaurantQueryHandler{repo: repo}
+type ListRestaurantQueryHandler struct {
+	repo IListRestaurantRepository
+	catRepo IGetRestaurantsCategories
+}
+
+func NewListRestaurantQueryHandler(repo IListRestaurantRepository, catRepo IGetRestaurantsCategories) *ListRestaurantQueryHandler {
+	return &ListRestaurantQueryHandler{repo: repo, catRepo: catRepo}
 }
 
 func (h *ListRestaurantQueryHandler) Handle(ctx context.Context, query *ListRestaurantQuery) (*ListRestaurantResult, error) {
@@ -77,6 +84,33 @@ func (h *ListRestaurantQueryHandler) Handle(ctx context.Context, query *ListRest
 		total, err = h.repo.Count(ctx)
 		if err != nil {
 			return nil, err
+		}
+	}
+
+	catIds := make([]uuid.UUID, 0)
+
+	for _, restaurant := range restaurants {
+		if restaurant.CategoryId != nil {
+			catIds = append(catIds, *restaurant.CategoryId)
+		}
+	}
+
+	categories, err := h.catRepo.FindCategoriesByIds(ctx, catIds)
+	if err != nil {
+		return nil, err
+	}
+
+	catMap := make(map[uuid.UUID]restaurantdomain.RestaurantCategory)
+
+	for _, category := range categories {
+		catMap[category.Id] = category
+	}
+
+	for i, restaurant := range restaurants {
+		if restaurant.CategoryId != nil {
+			if category, exists := catMap[*restaurant.CategoryId]; exists {
+				restaurants[i].Category = &category
+			}
 		}
 	}
 

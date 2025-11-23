@@ -2,6 +2,7 @@ package categorymodule
 
 import (
 	categorycontroller "vht-go/modules/category/infras/controller"
+	"vht-go/modules/category/infras/controller/categoryrpcserver"
 	categoryrepository "vht-go/modules/category/infras/repository"
 	categoryservice "vht-go/modules/category/service"
 
@@ -27,4 +28,7 @@ func SetupCategoryModule(v1 * gin.RouterGroup, db *gorm.DB) {
 		deleteHandler)
 
 	controller.SetupRoutes(v1)
+
+	rpcServer := categoryrpcserver.NewCategoryRPCServer(db)
+	rpcServer.SetupRouter(v1)
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-)	
+)
 
 func main() {
 	dsn := os.Getenv("DB_DSN")
