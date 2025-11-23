@@ -5,6 +5,7 @@ import (
 	categorydomain "vht-go/modules/category/domain"
 	categorydtos "vht-go/modules/category/dtos"
 	categoryservice "vht-go/modules/category/service"
+	"vht-go/shared"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -15,8 +16,7 @@ func (ctrl *HTTPCategoryController) GetCategoryByIdAPI() gin.HandlerFunc {
 		id, err := uuid.Parse(c.Param("id"))
 	
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-			return
+			panic(shared.ErrBadRequest.WithWrap(err).WithDebug(err.Error()))
 		}
 
 		var category *categorydomain.Category

@@ -11,6 +11,11 @@ require (
 require resty.dev/v3 v3.0.0-beta.3
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+)
+
+require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/bytedance/sonic v1.14.0 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
