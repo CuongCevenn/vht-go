@@ -9,6 +9,7 @@ import (
 	"vht-go/middleware"
 	categorymodule "vht-go/modules/category"
 	foodmodule "vht-go/modules/food"
+	ordermodule "vht-go/modules/order"
 	restaurantmodule "vht-go/modules/restaurant"
 	restaurantrepository "vht-go/modules/restaurant/infras/repository"
 	rstlikemodule "vht-go/modules/restaurantlike"
@@ -79,6 +80,7 @@ var rootCmd = &cobra.Command{
 		restaurantmodule.SetupRestaurantModule(v1, serviceCtx)
 		foodmodule.SetupFoodModule(v1, serviceCtx)
 		usermodule.SetupUserModule(v1, serviceCtx, jwtComponent, middlewareProvider)
+		ordermodule.SetupOrderModule(v1, serviceCtx)
 		rstlikemodule.SetupRestaurantLikeModule(v1, serviceCtx, middlewareProvider)
 
 		// Define a simple GET endpoint

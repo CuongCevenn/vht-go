@@ -3,6 +3,7 @@ package usermodule
 import (
 	"vht-go/middleware"
 	usercontroller "vht-go/modules/user/infras/controller"
+	"vht-go/modules/user/infras/controller/userrpcserver"
 	userrepository "vht-go/modules/user/infras/repository"
 	userservice "vht-go/modules/user/service"
 	"vht-go/shared"
@@ -25,4 +26,8 @@ func SetupUserModule(v1 *gin.RouterGroup, sctx sctx.ServiceContext, jwtComponent
 	)
 
 	controller.SetupRouter(v1, middlewareProvider)
+
+	// Setup RPC server
+	rpcServer := userrpcserver.NewUserRPCServer(db)
+	rpcServer.SetupRouter(v1)
 }

@@ -11,14 +11,18 @@ const (
 	DefaultJWTExpIn              = 60 * 60 * 24 * 7
 	DefaultCategoryServiceURI    = "http://localhost:3600/v1/rpc/categories"
 	DefaultRestaurantServiceURI  = "http://localhost:3600/v1/rpc/restaurants"
+	DefaultFoodServiceURI        = "http://localhost:3600/v1/rpc/foods"
+	DefaultUserServiceURI        = "http://localhost:3600/v1/rpc/users"
 )
 
 type AppConfig struct {
 	// id                 string
-	jwtSecretKey        string
-	jwtExpIn            int
-	categoryServiceURI  string
+	jwtSecretKey         string
+	jwtExpIn             int
+	categoryServiceURI   string
 	restaurantServiceURI string
+	foodServiceURI       string
+	userServiceURI       string
 }
 
 func NewAppConfig() *AppConfig {
@@ -34,6 +38,8 @@ func (a *AppConfig) InitFlags() {
 	flag.IntVar(&a.jwtExpIn, "jwt-exp-in", DefaultJWTExpIn, "JWT expiration in seconds")
 	flag.StringVar(&a.categoryServiceURI, "category-service-uri", DefaultCategoryServiceURI, "Category service URI")
 	flag.StringVar(&a.restaurantServiceURI, "restaurant-service-uri", DefaultRestaurantServiceURI, "Restaurant service URI")
+	flag.StringVar(&a.foodServiceURI, "food-service-uri", DefaultFoodServiceURI, "Food service URI")
+	flag.StringVar(&a.userServiceURI, "user-service-uri", DefaultUserServiceURI, "User service URI")
 }
 
 func (a *AppConfig) Activate(_ sctx.ServiceContext) error {
@@ -60,9 +66,19 @@ func (a *AppConfig) RestaurantServiceURI() string {
 	return a.restaurantServiceURI
 }
 
+func (a *AppConfig) FoodServiceURI() string {
+	return a.foodServiceURI
+}
+
+func (a *AppConfig) UserServiceURI() string {
+	return a.userServiceURI
+}
+
 type IAppConfig interface {
 	JwtSecretKey() string
 	JwtExpIn() int
 	CategoryServiceURI() string
 	RestaurantServiceURI() string
+	FoodServiceURI() string
+	UserServiceURI() string
 }
