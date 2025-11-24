@@ -33,6 +33,8 @@ func (h *UpdateRestaurantCommandHandler) Handle(ctx context.Context, cmd *Update
 		return err
 	}
 
+	currentTime := time.Now().UTC()
+
 	// Build updated entity with existing values
 	restaurant := &restaurantdomain.Restaurant{
 		Id:               cmd.Id,
@@ -45,7 +47,7 @@ func (h *UpdateRestaurantCommandHandler) Handle(ctx context.Context, cmd *Update
 		ShippingFeePerKm: oldRestaurant.ShippingFeePerKm,
 		Status:           oldRestaurant.Status,
 		CreatedAt:        oldRestaurant.CreatedAt,
-		UpdatedAt:        time.Now().UTC(),
+		UpdatedAt:        &currentTime,
 	}
 
 	// Apply changes with validation

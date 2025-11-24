@@ -40,6 +40,7 @@ func (h *CreateRestaurantResultCommandHandler) Handle(ctx context.Context, cmd *
 			log.Println(err)
 		}
 	}
+	currentTime := time.Now().UTC()
 
 	restaurant := &restaurantdomain.Restaurant{
 		OwnerId:          cmd.DTO.OwnerId,
@@ -51,8 +52,8 @@ func (h *CreateRestaurantResultCommandHandler) Handle(ctx context.Context, cmd *
 		Lng:              cmd.DTO.Lng,
 		ShippingFeePerKm: cmd.DTO.ShippingFeePerKm,
 		Status:           cmd.DTO.Status,
-		CreatedAt:        time.Now().UTC(),
-		UpdatedAt:        time.Now().UTC(),
+		CreatedAt:        &currentTime,
+		UpdatedAt:        &currentTime,
 	}
 
 	if err := h.repo.Insert(ctx, restaurant); err != nil {

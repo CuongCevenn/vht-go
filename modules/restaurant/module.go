@@ -1,21 +1,25 @@
 package restaurantmodule
 
 import (
-	"os"
 	restaurantcontroller "vht-go/modules/restaurant/infras/controller"
 	restaurantrepository "vht-go/modules/restaurant/infras/repository"
 	"vht-go/modules/restaurant/infras/repository/restaurantrpcclient"
 	restaurantservice "vht-go/modules/restaurant/service"
+	"vht-go/shared"
+	sharedcomponent "vht-go/shared/component"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	sctx "github.com/viettranx/service-context"
 )
 
 // Dependencies Injection
-func SetupRestaurantModule(v1 *gin.RouterGroup, db *gorm.DB) {
+func SetupRestaurantModule(rg *gin.RouterGroup, sctx sctx.ServiceContext) {
+	appConfig := sctx.MustGet(sharedcomponent.AppConfigID).(sharedcomponent.IAppConfig)
+	db := sctx.MustGet(shared.KeyGormComp).(sharedcomponent.IGormComp).DB()
+
 	// 1. Initialize repository
 	repo := restaurantrepository.NewGORMRestaurantRepository(db)
-	rpcClient := restaurantrpcclient.NewCategoryRPCClient(os.Getenv("CATEGORY_SERVICE_URI"))
+	rpcClient := restaurantrpcclient.NewCategoryRPCClient(appConfig.CategoryServiceURI())
 
 	// 2. Initialize handlers with repository
 	createHandler := restaurantservice.NewCreateRestaurantResultCommandHandler(repo)
@@ -34,6 +38,6 @@ func SetupRestaurantModule(v1 *gin.RouterGroup, db *gorm.DB) {
 	)
 
 	// 4. Setup routes
-	controller.SetupRoutes(v1)
+	controller.SetupRoutes(rg)
 }
 

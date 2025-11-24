@@ -11,8 +11,15 @@ require (
 require resty.dev/v3 v3.0.0-beta.3
 
 require (
+	github.com/facebookgo/flagenv v0.0.0-20160425205200-fcd59fca7456 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sirupsen/logrus v1.9.0 // indirect
+	github.com/spf13/cobra v1.10.1 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
+	github.com/viettranx/service-context v0.0.0-20230323042009-c37d85a84d5e // indirect
 )
 
 require (

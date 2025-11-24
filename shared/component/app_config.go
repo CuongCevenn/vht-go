@@ -1,0 +1,60 @@
+package sharedcomponent
+
+import (
+	"flag"
+
+	sctx "github.com/viettranx/service-context"
+)
+
+const (
+	AppConfigID               = "AppConfig"
+	DefaultJWTExpIn           = 60 * 60 * 24 * 7
+	DefaultCategoryServiceURI = "http://localhost:3600/v1/rpc/categories"
+)
+
+type AppConfig struct {
+	// id                 string
+	jwtSecretKey       string
+	jwtExpIn           int
+	categoryServiceURI string
+}
+
+func NewAppConfig() *AppConfig {
+	return &AppConfig{}
+}
+
+func (a *AppConfig) ID() string {
+	return AppConfigID
+}
+
+func (a *AppConfig) InitFlags() {
+	flag.StringVar(&a.jwtSecretKey, "jwt-secret-key", "", "JWT secret key")
+	flag.IntVar(&a.jwtExpIn, "jwt-exp-in", DefaultJWTExpIn, "JWT expiration in seconds")
+	flag.StringVar(&a.categoryServiceURI, "category-service-uri", DefaultCategoryServiceURI, "Category service URI")
+}
+
+func (a *AppConfig) Activate(_ sctx.ServiceContext) error {
+	return nil
+}
+
+func (a *AppConfig) Stop() error {
+	return nil
+}
+
+func (a *AppConfig) JwtSecretKey() string {
+	return a.jwtSecretKey
+}
+
+func (a *AppConfig) JwtExpIn() int {
+	return a.jwtExpIn
+}
+
+func (a *AppConfig) CategoryServiceURI() string {
+	return a.categoryServiceURI
+}
+
+type IAppConfig interface {
+	JwtSecretKey() string
+	JwtExpIn() int
+	CategoryServiceURI() string
+}

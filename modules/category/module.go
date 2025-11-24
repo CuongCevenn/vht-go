@@ -5,13 +5,17 @@ import (
 	"vht-go/modules/category/infras/controller/categoryrpcserver"
 	categoryrepository "vht-go/modules/category/infras/repository"
 	categoryservice "vht-go/modules/category/service"
+	"vht-go/shared"
+	sharedcomponent "vht-go/shared/component"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	sctx "github.com/viettranx/service-context"
 )
 
 // Dependencies Injection
-func SetupCategoryModule(v1 * gin.RouterGroup, db *gorm.DB) {
+func SetupCategoryModule(v1 *gin.RouterGroup, sctx sctx.ServiceContext) {
+	db := sctx.MustGet(shared.KeyGormComp).(sharedcomponent.IGormComp).DB()
+
 	repo := categoryrepository.NewGORMCategoryRepository(db)
 	// service := categoryservice.NewCategoryService(repo)
 	createHandler := categoryservice.NewCreateCategoryResultCommandHandler(repo)
