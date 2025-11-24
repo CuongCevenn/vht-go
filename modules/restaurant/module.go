@@ -3,6 +3,7 @@ package restaurantmodule
 import (
 	"os"
 	restaurantcontroller "vht-go/modules/restaurant/infras/controller"
+	"vht-go/modules/restaurant/infras/controller/restaurantrpcserver"
 	restaurantrepository "vht-go/modules/restaurant/infras/repository"
 	restaurantgrpcclient "vht-go/modules/restaurant/infras/repository/grpc-client"
 	"vht-go/modules/restaurant/infras/repository/restaurantrpcclient"
@@ -49,5 +50,9 @@ func SetupRestaurantModule(rg *gin.RouterGroup, sctx sctx.ServiceContext) {
 
 	// 4. Setup routes
 	controller.SetupRoutes(rg)
+
+	// 5. Setup RPC server
+	rpcServer := restaurantrpcserver.NewRestaurantRPCServer(db)
+	rpcServer.SetupRouter(rg)
 }
 
