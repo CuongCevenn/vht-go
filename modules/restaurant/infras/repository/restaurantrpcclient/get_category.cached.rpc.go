@@ -11,12 +11,16 @@ import (
 
 // Proxy design pattern
 
+type IGetCategoryRepository interface {
+	FindCategoryById(ctx context.Context, id uuid.UUID) (*restaurantdomain.RestaurantCategory, error)
+}
+
 type GetCategoryCachedRPCClient struct {
-	originRepo *CategoryRPCClient
+	originRepo IGetCategoryRepository
 	redisComp  sharedcomponent.IRedisComp
 }
 
-func NewGetCategoryCachedRPCClient(originRepo *CategoryRPCClient, redisComp sharedcomponent.IRedisComp) *GetCategoryCachedRPCClient {
+func NewGetCategoryCachedRPCClient(originRepo IGetCategoryRepository, redisComp sharedcomponent.IRedisComp) *GetCategoryCachedRPCClient {
 	return &GetCategoryCachedRPCClient{originRepo: originRepo, redisComp: redisComp}
 }
 

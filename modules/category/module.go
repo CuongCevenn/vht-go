@@ -1,8 +1,10 @@
 package categorymodule
 
 import (
+	categorygrpc "vht-go/gen/proto/category"
 	categorycontroller "vht-go/modules/category/infras/controller"
 	"vht-go/modules/category/infras/controller/categoryrpcserver"
+	categorygrpcserver "vht-go/modules/category/infras/controller/grpc-server"
 	categoryrepository "vht-go/modules/category/infras/repository"
 	categoryservice "vht-go/modules/category/service"
 	"vht-go/shared"
@@ -10,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	sctx "github.com/viettranx/service-context"
+	"google.golang.org/grpc"
 )
 
 // Dependencies Injection
@@ -35,4 +38,12 @@ func SetupCategoryModule(v1 *gin.RouterGroup, sctx sctx.ServiceContext) {
 
 	rpcServer := categoryrpcserver.NewCategoryRPCServer(db)
 	rpcServer.SetupRouter(v1)
+
+	// GRPC Server Registers
+	grpcServerComp := categorygrpcserver.NewCategoryGrpcServer(repo)
+
+	grpcServer := sctx.MustGet(shared.KeyGrpcServerComp).(sharedcomponent.IGrpcServerComp)
+	grpcServer.Register(func(s *grpc.Server) {
+		categorygrpc.RegisterCategoryServiceServer(s, grpcServerComp)
+	})
 }

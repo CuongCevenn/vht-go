@@ -1,8 +1,10 @@
 package restaurantmodule
 
 import (
+	"os"
 	restaurantcontroller "vht-go/modules/restaurant/infras/controller"
 	restaurantrepository "vht-go/modules/restaurant/infras/repository"
+	restaurantgrpcclient "vht-go/modules/restaurant/infras/repository/grpc-client"
 	"vht-go/modules/restaurant/infras/repository/restaurantrpcclient"
 	restaurantservice "vht-go/modules/restaurant/service"
 	"vht-go/shared"
@@ -17,12 +19,15 @@ func SetupRestaurantModule(rg *gin.RouterGroup, sctx sctx.ServiceContext) {
 	appConfig := sctx.MustGet(sharedcomponent.AppConfigID).(sharedcomponent.IAppConfig)
 	db := sctx.MustGet(shared.KeyGormComp).(sharedcomponent.IGormComp).DB()
 
+	rstGRPCClient := restaurantgrpcclient.NewRestaurantGrpcClient(os.Getenv("CATEGORY_GRPC_URI"))
+
+
 	// 1. Initialize repository
 	repo := restaurantrepository.NewGORMRestaurantRepository(db)
 	rpcClient := restaurantrpcclient.NewCategoryRPCClient(appConfig.CategoryServiceURI())
 
 	categoryCachedRPCClient := restaurantrpcclient.NewGetCategoryCachedRPCClient(
-		rpcClient,
+		rstGRPCClient,
 		sctx.MustGet(shared.KeyRedisComp).(sharedcomponent.IRedisComp),
 	)
 

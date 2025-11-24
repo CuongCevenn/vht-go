@@ -17,7 +17,7 @@ type UpdateCategoryCommand struct {
 }
 
 type IUpdateCategoryRepository interface {
-	FindById(ctx context.Context, dto *categorydtos.GetCategoryDTO) (category *categorydomain.Category, err error)
+	FindById(ctx context.Context, id uuid.UUID) (category *categorydomain.Category, err error)
 	Update(ctx context.Context, category *categorydomain.Category, id *uuid.UUID) error
 }
 
@@ -34,7 +34,7 @@ func (h *UpdateCategoryCommandHandler) Handle(ctx context.Context, cmd *UpdateCa
 		Id: cmd.Id,
 	}
 
-	oldCategory, err := h.repo.FindById(ctx, getCategoryCommand)
+	oldCategory, err := h.repo.FindById(ctx, *getCategoryCommand.Id)
 	if err != nil {
 		return err
 	}

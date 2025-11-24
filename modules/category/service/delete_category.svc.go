@@ -2,7 +2,6 @@ package categoryservice
 
 import (
 	"context"
-	categorydtos "vht-go/modules/category/dtos"
 
 	"github.com/google/uuid"
 )
@@ -25,7 +24,7 @@ func NewDeleteCategoryCommandHandler(queryRepo IGetCategoryQueryRepository, repo
 }
 
 func (h *DeleteCategoryCommandHandler) Handle(ctx context.Context, cmd *DeleteCategoryCommand) error {
-	_, err := h.queryRepo.FindById(ctx, &categorydtos.GetCategoryDTO{Id: cmd.Id})
+	_, err := h.queryRepo.FindById(ctx, *cmd.Id)
 	if err != nil {
 		return err
 	}

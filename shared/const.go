@@ -13,6 +13,7 @@ const (
 	KeyLocalPubSubComp = "localPubSub"
 	KeyNatsPubSubComp  = "natsPubSub"
 	KeyRedisComp       = "redis"
+	KeyGrpcServerComp  = "grpcServer"
 
 	EvtRestaurantLiked   = "RestaurantLiked"
 	EvtRestaurantUnliked = "RestaurantUnliked"

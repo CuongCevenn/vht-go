@@ -4,6 +4,8 @@ import (
 	"context"
 	categorydomain "vht-go/modules/category/domain"
 	categorydtos "vht-go/modules/category/dtos"
+
+	"github.com/google/uuid"
 )
 
 type GetCategoryQuery struct {
@@ -11,7 +13,7 @@ type GetCategoryQuery struct {
 }
 
 type IGetCategoryQueryRepository interface {
-	FindById(ctx context.Context, dto *categorydtos.GetCategoryDTO) (category *categorydomain.Category, err error)
+	FindById(ctx context.Context, id uuid.UUID) (category *categorydomain.Category, err error)
 }
 
 type GetCategoryQueryHandler struct {
@@ -23,5 +25,5 @@ func NewGetCategoryQueryHandler(repo IGetCategoryQueryRepository) *GetCategoryQu
 }
 
 func (h *GetCategoryQueryHandler) Handle(ctx context.Context, cmd *GetCategoryQuery) (category *categorydomain.Category, err error) {
-	return h.repo.FindById(ctx, cmd.DTO)
+	return h.repo.FindById(ctx, *cmd.DTO.Id)
 }
