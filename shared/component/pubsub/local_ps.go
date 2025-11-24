@@ -45,7 +45,7 @@ func (ps *localPubSub) Publish(ctx context.Context, topic Topic, data *Message) 
 	return nil
 }
 
-func (ps *localPubSub) Subscribe(ctx context.Context, topic Topic) (ch <-chan *Message, unsubscribe func()) {
+func (ps *localPubSub) Subscribe(ctx context.Context, topic Topic) (ch chan *Message, unsubscribe func()) {
 	c := make(chan *Message)
 
 	ps.locker.Lock()

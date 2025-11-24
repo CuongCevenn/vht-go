@@ -11,6 +11,8 @@ const (
 
 	KeyGormComp        = "gorm"
 	KeyLocalPubSubComp = "localPubSub"
+	KeyNatsPubSubComp  = "natsPubSub"
+	KeyRedisComp       = "redis"
 
 	EvtRestaurantLiked   = "RestaurantLiked"
 	EvtRestaurantUnliked = "RestaurantUnliked"

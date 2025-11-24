@@ -15,14 +15,15 @@ import (
 
 func SetupRestaurantLikeModule(v1 *gin.RouterGroup, sctx sctx.ServiceContext, middlewareProvider middleware.IMiddlewareProvider) {
 	db := sctx.MustGet(shared.KeyGormComp).(sharedcomponent.IGormComp).DB()
-	ps := sctx.MustGet(shared.KeyLocalPubSubComp).(pubsub.IPubSub)
+	// ps := sctx.MustGet(shared.KeyLocalPubSubComp).(pubsub.IPubSub)
+	natsPS := sctx.MustGet(shared.KeyNatsPubSubComp).(pubsub.IPubSub)
 
 	restaurantRepository := rstlikerepository.NewGORMRestaurantRepository(db)
 	repo := rstlikerepository.NewGORMRestaurantLikeRepository(db)
 
 	// updateCountersRepository := repository.NewGORMRestaurantRepository(db)
-	likeRestaurantCommandHandler := rstlikeservice.NewLikeRestaurantCommandHandler(restaurantRepository, repo, ps)
-	unlikeRestaurantCommandHandler := rstlikeservice.NewUnlikeRestaurantCommandHandler(repo, ps)
+	likeRestaurantCommandHandler := rstlikeservice.NewLikeRestaurantCommandHandler(restaurantRepository, repo, natsPS)
+	unlikeRestaurantCommandHandler := rstlikeservice.NewUnlikeRestaurantCommandHandler(repo, natsPS)
 
 	ctrl := rstlikecontroller.NewHTTPRestaurantLikeController(likeRestaurantCommandHandler, unlikeRestaurantCommandHandler)
 

@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"strconv"
 	restaurantrepository "vht-go/modules/restaurant/infras/repository"
 	"vht-go/shared"
 	sharedcomponent "vht-go/shared/component"
@@ -23,7 +25,7 @@ var decreaseLikedCountCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		ps := serviceCtx.MustGet(shared.KeyLocalPubSubComp).(pubsub.IPubSub)
+		ps := serviceCtx.MustGet(shared.KeyNatsPubSubComp).(pubsub.IPubSub)
 		db := serviceCtx.MustGet(shared.KeyGormComp).(sharedcomponent.IGormComp).DB()
 
 		ch, _ := ps.Subscribe(context.Background(), pubsub.Topic(shared.EvtRestaurantUnliked))
@@ -32,7 +34,12 @@ var decreaseLikedCountCmd = &cobra.Command{
 
 		for msg := range ch {
 			data := msg.Data().(map[string]interface{})
-			restaurantId := data["restaurantId"].(int)
+			restaurantIdStr := fmt.Sprintf("%v", data["restaurantId"])
+			restaurantId, err := strconv.Atoi(restaurantIdStr)
+			if err != nil {
+				serviceCtx.Logger("increase-liked-count").Errorln("Invalid restaurantId", data)
+				continue
+			}
 			// userId := data["userId"].(string)
 			repo.DecreaseLikedCount(context.Background(), restaurantId)
 

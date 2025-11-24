@@ -62,11 +62,11 @@ func (h *UnlikeRestaurantCommandHandler) Handle(ctx context.Context, cmd *Unlike
 	}
 
 	// Event data and publish to pubsub
-	evtData := map[string]interface{}{
-		"restaurantId": cmd.RestaurantId,
-		"userId":       cmd.Requester.Subject(),
+	evtData := rstlikedomain.RestaurantEvent{
+		RestaurantId: cmd.RestaurantId,
+		UserId:       cmd.Requester.Subject(),
 	}
-
+	
 	if err := h.ps.Publish(ctx, pubsub.Topic(shared.EvtRestaurantUnliked), pubsub.NewMessage(evtData)); err != nil {
 		log.Println("error publish unliked event", err)
 	}

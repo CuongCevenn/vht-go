@@ -21,9 +21,14 @@ func SetupRestaurantModule(rg *gin.RouterGroup, sctx sctx.ServiceContext) {
 	repo := restaurantrepository.NewGORMRestaurantRepository(db)
 	rpcClient := restaurantrpcclient.NewCategoryRPCClient(appConfig.CategoryServiceURI())
 
+	categoryCachedRPCClient := restaurantrpcclient.NewGetCategoryCachedRPCClient(
+		rpcClient,
+		sctx.MustGet(shared.KeyRedisComp).(sharedcomponent.IRedisComp),
+	)
+
 	// 2. Initialize handlers with repository
 	createHandler := restaurantservice.NewCreateRestaurantResultCommandHandler(repo)
-	getHandler := restaurantservice.NewGetRestaurantQueryHandler(repo, rpcClient)
+	getHandler := restaurantservice.NewGetRestaurantQueryHandler(repo, categoryCachedRPCClient)
 	listHandler := restaurantservice.NewListRestaurantQueryHandler(repo, rpcClient)
 	updateHandler := restaurantservice.NewUpdateRestaurantCommandHandler(repo)
 	deleteHandler := restaurantservice.NewDeleteRestaurantCommandHandler(repo, repo)

@@ -27,6 +27,8 @@ func newService() sctx.ServiceContext {
 		sctx.WithComponent(sharedcomponent.NewAppConfig()),
 		sctx.WithComponent(sharedcomponent.NewGormComp(shared.KeyGormComp)),
 		sctx.WithComponent(pubsub.NewPubSub(shared.KeyLocalPubSubComp)),
+		sctx.WithComponent(pubsub.NewNatsComp(shared.KeyNatsPubSubComp)),
+		sctx.WithComponent(sharedcomponent.NewRedisComp(shared.KeyRedisComp)),
 	)
 
 	return serviceCtx
@@ -85,7 +87,7 @@ var rootCmd = &cobra.Command{
 			})
 		})
 
-		runConsumers(serviceCtx)
+		// runConsumers(serviceCtx)
 
 		// Start server on port 8080 (default)
 		// Server will listen on 0.0.0.0:8080 (localhost:8080 on Windows)

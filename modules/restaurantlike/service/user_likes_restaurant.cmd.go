@@ -87,9 +87,9 @@ func (h *LikeRestaurantCommandHandler) Handle(ctx context.Context, cmd *LikeRest
 	}
 
 	// Event data and publish to pubsub
-	evtData := map[string]interface{}{
-		"restaurantId": cmd.RestaurantId,
-		"userId":       cmd.Requester.Subject(),
+	evtData := rstlikedomain.RestaurantEvent{
+		RestaurantId: cmd.RestaurantId,
+		UserId:       cmd.Requester.Subject(),
 	}
 
 	if err := h.ps.Publish(ctx, pubsub.Topic(shared.EvtRestaurantLiked), pubsub.NewMessage(evtData)); err != nil {

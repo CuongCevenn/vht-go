@@ -10,7 +10,7 @@ type Topic string
 
 type IPubSub interface {
 	Publish(ctx context.Context, channel Topic, data *Message) error
-	Subscribe(ctx context.Context, channel Topic) (ch <-chan *Message, close func())
+	Subscribe(ctx context.Context, channel Topic) (ch chan *Message, close func())
 }
 
 type Message struct {
@@ -44,4 +44,9 @@ func (evt *Message) SetChannel(channel Topic) {
 
 func (evt *Message) Data() interface{} {
 	return evt.data
+}
+
+func (evt *Message) WithChannel(channel Topic) *Message {
+	evt.channel = channel
+	return evt
 }
